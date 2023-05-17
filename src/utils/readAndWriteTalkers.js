@@ -12,6 +12,14 @@ const readTalkerFile = async () => {
   }
 };
 
+const writeTalker = async (talker) => {
+  const fileData = await fs.readFile(FILENAME, 'utf8');
+  const talkers = JSON.parse(fileData);    
+  talkers.push(talker);   
+  await fs.writeFile(FILENAME, JSON.stringify(talkers, null, 2));
+};
+
 module.exports = {
   readTalkerFile,
+  writeTalker,
 };

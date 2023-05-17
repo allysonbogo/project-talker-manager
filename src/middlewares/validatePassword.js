@@ -1,4 +1,4 @@
-const validatePassword = async (req, res, next) => {
+const validatePassword = (req, res, next) => {
   const { password } = req.body;
   if (!password) {
     return res.status(400).json({ message: 'O campo "password" é obrigatório' }); 
