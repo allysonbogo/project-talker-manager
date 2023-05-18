@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { readTalkerFile, writeTalker, updateTalker } = require('../utils/readAndWriteTalkers');
+const { readTalkerFile, writeTalker, updateTalker, deleteTalker } = require('../utils/readAndWriteTalkers');
 const { validateToken } = require('../middlewares/validateToken');
 const { validateName } = require('../middlewares/validateName');
 const { validateAge } = require('../middlewares/validateAge');
@@ -24,8 +24,10 @@ talkerRouter.get('/:id', async (req, res) => {
     return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
 });
 
-talkerRouter.post('/', validateToken, validateName, validateAge,
-  validateTalk, validateTalkInfo, async (req, res) => {
+talkerRouter.post('/',
+  validateToken, validateName,
+  validateAge, validateTalk,
+  validateTalkInfo, async (req, res) => {
   const talkers = await readTalkerFile();
   const newTalker = { id: talkers.length + 1, ...req.body };
   await writeTalker(newTalker);
@@ -33,14 +35,20 @@ talkerRouter.post('/', validateToken, validateName, validateAge,
 });
 
 talkerRouter.put('/:id',
-  validateToken,
-  validateId,
+  validateToken, validateId,
   validateName, validateAge,
   validateTalk, validateTalkInfo, async (req, res) => {
   const { id } = req.params;
   const talkerInfo = { id: +id, ...req.body };
   await updateTalker(talkerInfo, id);
   return res.status(200).json(talkerInfo);
+});
+
+talkerRouter.delete('/:id',
+  validateToken, validateId, async (req, res) => {
+  const { id } = req.params;
+  await deleteTalker(id);
+  return res.sendStatus(204);
 });
 
 module.exports = { talkerRouter };

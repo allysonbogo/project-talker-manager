@@ -31,8 +31,17 @@ const updateTalker = async (talker, id) => {
   await fs.writeFile(FILENAME, JSON.stringify(talkers, null, 2));
 };
 
+const deleteTalker = async (id) => {
+  const fileData = await fs.readFile(FILENAME, 'utf8');
+  const talkers = JSON.parse(fileData);
+  const talkerIndex = talkers.findIndex((t) => t.id === +id);
+  talkers.splice(talkerIndex, 1);
+  await fs.writeFile(FILENAME, JSON.stringify(talkers, null, 2));
+};
+
 module.exports = {
   readTalkerFile,
   writeTalker,
   updateTalker,
+  deleteTalker,
 };
