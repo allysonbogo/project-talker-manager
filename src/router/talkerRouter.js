@@ -1,10 +1,11 @@
 const { Router } = require('express');
-const { readTalkerFile, writeTalker } = require('../utils/readAndWriteTalkers');
+const { readTalkerFile, writeTalker, updateTalker } = require('../utils/readAndWriteTalkers');
 const { validateToken } = require('../middlewares/validateToken');
-const { validateName } = require('../middlewares/validateNameAndAge');
+const { validateName } = require('../middlewares/validateName');
 const { validateAge } = require('../middlewares/validateAge');
 const { validateTalk } = require('../middlewares/validateTalk');
 const { validateTalkInfo } = require('../middlewares/validateTalkInfo');
+const { validateId } = require('../middlewares/validateId');
 
 const talkerRouter = Router();
 
@@ -29,6 +30,17 @@ talkerRouter.post('/', validateToken, validateName, validateAge,
   const newTalker = { id: talkers.length + 1, ...req.body };
   await writeTalker(newTalker);
   return res.status(201).json(newTalker);
+});
+
+talkerRouter.put('/:id',
+  validateToken,
+  validateId,
+  validateName, validateAge,
+  validateTalk, validateTalkInfo, async (req, res) => {
+  const { id } = req.params;
+  const talkerInfo = { id: +id, ...req.body };
+  await updateTalker(talkerInfo, id);
+  return res.status(200).json(talkerInfo);
 });
 
 module.exports = { talkerRouter };
