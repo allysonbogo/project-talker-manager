@@ -1,12 +1,18 @@
 const { Router } = require('express');
-const { readTalkerFile, writeTalker,
-  updateTalker, deleteTalker } = require('../utils/readAndWriteTalkers');
+const {
+  readTalkerFile, writeTalker,
+  updateTalker, deleteTalker,
+} = require('../utils/readAndWriteTalkers');
+const { searchByName } = require('../utils/searchByName');
+const { searchByRate } = require('../utils/searchByRate');
 const { validateToken } = require('../middlewares/validateToken');
 const { validateName } = require('../middlewares/validateName');
 const { validateAge } = require('../middlewares/validateAge');
 const { validateTalk } = require('../middlewares/validateTalk');
-const { validateTalkInfo } = require('../middlewares/validateTalkInfo');
 const { validateId } = require('../middlewares/validateId');
+const { validateRate } = require('../middlewares/validateRate');
+const { validateWatchedAt } = require('../middlewares/validateWatchedAt');
+const { validateRateQuery } = require('../middlewares/validateRateQuery');
 
 const talkerRouter = Router();
 
@@ -16,15 +22,13 @@ talkerRouter.get('/', async (req, res) => {
 });
 
 talkerRouter.get('/search',
-  validateToken, async (req, res) => {
+  validateToken, validateRateQuery,
+  async (req, res) => {
   const { q } = req.query;
-  const talkers = await readTalkerFile();
-  if (!q) return res.status(200).json(talkers);
-  if (talkers.some((t) => t.name.startsWith(q))) {
-    const talker = talkers.filter((t) => t.name.startsWith(q));
-    return res.status(200).json(talker);
-  }
-  return res.status(200).json([]);
+  const rate = Number(req.query.rate);
+  const talkersByName = await searchByName(q);
+  const talkersByRate = await searchByRate(talkersByName, rate);
+  return res.status(200).json(talkersByRate);
 });
 
 talkerRouter.get('/:id', async (req, res) => {
@@ -40,7 +44,7 @@ talkerRouter.get('/:id', async (req, res) => {
 talkerRouter.post('/',
   validateToken, validateName,
   validateAge, validateTalk,
-  validateTalkInfo, async (req, res) => {
+  validateRate, validateWatchedAt, async (req, res) => {
   const talkers = await readTalkerFile();
   const newTalker = { id: talkers.length + 1, ...req.body };
   await writeTalker(newTalker);
@@ -50,7 +54,8 @@ talkerRouter.post('/',
 talkerRouter.put('/:id',
   validateToken, validateId,
   validateName, validateAge,
-  validateTalk, validateTalkInfo, async (req, res) => {
+  validateTalk, validateRate,
+  validateWatchedAt, async (req, res) => {
   const { id } = req.params;
   const talkerInfo = { id: +id, ...req.body };
   await updateTalker(talkerInfo, id);
