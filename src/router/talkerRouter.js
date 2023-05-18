@@ -15,6 +15,7 @@ const { validateWatchedAt } = require('../middlewares/validateWatchedAt');
 const { validateRateQuery } = require('../middlewares/validateRateQuery');
 const { validateWatchedAtQuery } = require('../middlewares/validateWatchedAtQuery');
 const { validateRateUpdate } = require('../middlewares/validateRateUpdate');
+const { findAll } = require('../db/talkerDB');
 
 const talkerRouter = Router();
 
@@ -33,11 +34,29 @@ talkerRouter.get('/search',
   return res.status(200).json(talkersByDate);
 });
 
+talkerRouter.get('/db', async (req, res) => {
+  const [talkers] = await findAll();
+  if (!talkers) return res.status(200).json([]);
+  const correctInfo = talkers.map((talker) => {
+    const info = {
+      name: talker.name,
+      age: talker.age,
+      id: talker.id,
+      talk: {
+        rate: talker.talk_rate,
+        watchedAt: talker.talk_watched_at,
+      },
+    };
+    return info;
+  });
+  return res.status(200).json(correctInfo);
+});
+
 talkerRouter.get('/:id', async (req, res) => {
-  const id = Number(req.params.id);
+  const { id } = req.params;
   const talkers = await readTalkerFile();
-  if (talkers.some((t) => t.id === id)) {
-    const talker = talkers.find((t) => t.id === id);
+  if (talkers.some((t) => t.id === +id)) {
+    const talker = talkers.find((t) => t.id === +id);
     return res.status(200).json(talker);
   } 
   return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
