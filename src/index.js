@@ -17,5 +17,5 @@ app.use('/talker', talkerRouter);
 app.use('/login', loginRouter);
 
 app.listen(PORT, () => {
-  console.log('Online');
+  console.log(`Talker Manager online on port ${PORT}`);
 });

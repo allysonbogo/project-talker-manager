@@ -14,6 +14,18 @@ talkerRouter.get('/', async (req, res) => {
   return res.status(200).json(talkers);
 });
 
+talkerRouter.get('/search',
+  validateToken, async (req, res) => {
+  const { q } = req.query;
+  const talkers = await readTalkerFile();
+  if (!q) return res.status(200).json(talkers);
+  if (talkers.some((t) => t.name.startsWith(q))) {
+    const talker = talkers.filter((t) => t.name.startsWith(q));
+    return res.status(200).json(talker);
+  }
+  return res.status(200).json([]);
+});
+
 talkerRouter.get('/:id', async (req, res) => {
   const id = Number(req.params.id);
   const talkers = await readTalkerFile();
@@ -50,5 +62,7 @@ talkerRouter.delete('/:id',
   await deleteTalker(id);
   return res.sendStatus(204);
 });
+
+
 
 module.exports = { talkerRouter };
