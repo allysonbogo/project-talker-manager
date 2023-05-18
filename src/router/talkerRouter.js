@@ -5,6 +5,7 @@ const {
 } = require('../utils/readAndWriteTalkers');
 const { searchByName } = require('../utils/searchByName');
 const { searchByRate } = require('../utils/searchByRate');
+const { searchByDate } = require('../utils/searchByDate');
 const { validateToken } = require('../middlewares/validateToken');
 const { validateName } = require('../middlewares/validateName');
 const { validateAge } = require('../middlewares/validateAge');
@@ -24,10 +25,18 @@ talkerRouter.get('/', async (req, res) => {
 talkerRouter.get('/search',
   validateToken, validateRateQuery,
   async (req, res) => {
-  const { q } = req.query;
-  const rate = Number(req.query.rate);
+  const { q, rate, date } = req.query;
+  const regex = /^\d{2}\/\d{2}\/\d{4}$/;
   const talkersByName = await searchByName(q);
-  const talkersByRate = await searchByRate(talkersByName, rate);
+  const talkersByRate = await searchByRate(talkersByName, +rate);
+  if (date) {
+    if (!regex.test(date)) {
+      return res.status(400)
+        .json({ message: 'O parâmetro "date" deve ter o formato "dd/mm/aaaa"' });
+    }
+    const talkersByDate = await searchByDate(talkersByRate, date);
+    return res.status(200).json(talkersByDate);
+  }
   return res.status(200).json(talkersByRate);
 });
 
