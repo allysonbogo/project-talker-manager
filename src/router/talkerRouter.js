@@ -1,7 +1,6 @@
 const { Router } = require('express');
 const {
-  readTalkerFile, writeTalker,
-  updateTalker, deleteTalker,
+  readTalkerFile, writeTalker, updateTalker, deleteTalker, updateTalkerRate,
 } = require('../utils/readAndWriteTalkers');
 const { searchByName } = require('../utils/searchByName');
 const { searchByRate } = require('../utils/searchByRate');
@@ -14,6 +13,8 @@ const { validateId } = require('../middlewares/validateId');
 const { validateRate } = require('../middlewares/validateRate');
 const { validateWatchedAt } = require('../middlewares/validateWatchedAt');
 const { validateRateQuery } = require('../middlewares/validateRateQuery');
+const { validateWatchedAtQuery } = require('../middlewares/validateWatchedAtQuery');
+const { validateRateUpdate } = require('../middlewares/validateRateUpdate');
 
 const talkerRouter = Router();
 
@@ -23,21 +24,13 @@ talkerRouter.get('/', async (req, res) => {
 });
 
 talkerRouter.get('/search',
-  validateToken, validateRateQuery,
+  validateToken, validateRateQuery, validateWatchedAtQuery,
   async (req, res) => {
   const { q, rate, date } = req.query;
-  const regex = /^\d{2}\/\d{2}\/\d{4}$/;
   const talkersByName = await searchByName(q);
   const talkersByRate = await searchByRate(talkersByName, +rate);
-  if (date) {
-    if (!regex.test(date)) {
-      return res.status(400)
-        .json({ message: 'O parâmetro "date" deve ter o formato "dd/mm/aaaa"' });
-    }
-    const talkersByDate = await searchByDate(talkersByRate, date);
-    return res.status(200).json(talkersByDate);
-  }
-  return res.status(200).json(talkersByRate);
+  const talkersByDate = await searchByDate(talkersByRate, date);
+  return res.status(200).json(talkersByDate);
 });
 
 talkerRouter.get('/:id', async (req, res) => {
@@ -75,6 +68,15 @@ talkerRouter.delete('/:id',
   validateToken, validateId, async (req, res) => {
   const { id } = req.params;
   await deleteTalker(id);
+  return res.sendStatus(204);
+});
+
+talkerRouter.patch('/rate/:id',
+  validateToken, validateRateUpdate,
+  async (req, res) => {
+  const { id } = req.params;
+  const { rate } = req.body;
+  await updateTalkerRate(id, rate);
   return res.sendStatus(204);
 });
 
