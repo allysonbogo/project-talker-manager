@@ -1,5 +1,6 @@
 const { Router } = require('express');
-const { readTalkerFile, writeTalker, updateTalker, deleteTalker } = require('../utils/readAndWriteTalkers');
+const { readTalkerFile, writeTalker,
+  updateTalker, deleteTalker } = require('../utils/readAndWriteTalkers');
 const { validateToken } = require('../middlewares/validateToken');
 const { validateName } = require('../middlewares/validateName');
 const { validateAge } = require('../middlewares/validateAge');
@@ -33,7 +34,7 @@ talkerRouter.get('/:id', async (req, res) => {
     const talker = talkers.find((t) => t.id === id);
     return res.status(200).json(talker);
   } 
-    return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+  return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
 });
 
 talkerRouter.post('/',
@@ -62,7 +63,5 @@ talkerRouter.delete('/:id',
   await deleteTalker(id);
   return res.sendStatus(204);
 });
-
-
 
 module.exports = { talkerRouter };
