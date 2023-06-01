@@ -119,7 +119,10 @@ npm run dev
     "name: "Henrique Albuquerque",
     "age": 62,
     "id": 1,
-    "talk": { "watchedAt": "23/10/2020", "rate": 5 }
+    "talk": {
+      "watchedAt": "23/10/2020",
+      "rate": 5
+    }
   },
   ...
 ]
@@ -144,7 +147,10 @@ npm run dev
   "name": "Henrique Albuquerque",
   "age": 62,
   "id": 1,
-  "talk": { "watchedAt": "23/10/2020", "rate": 5 }
+  "talk": {
+    "watchedAt": "23/10/2020",
+    "rate": 5
+  }
 }
 ```
 </details>
@@ -153,7 +159,7 @@ npm run dev
   <summary> A requisição irá falhar nos seguintes casos: </summary>
   - É disparado o erro <code>404</code> <code>{ message: "Pessoa palestrante não encontrada" }</code>, caso a pessoa palestrante não esteja cadastrada no banco de dados; <br>
 </details>
-
+<br>
 
 | Método | Funcionalidade | URL |
 |---|---|---|
@@ -202,13 +208,13 @@ npm run dev
   - A rota retorna um erro <code>400</code> <code>{ "message": "O campo \"watchedAt\" é obrigatório" }</code>, caso a chave watchedAt não seja informada ou esteja vazia; <br>
   - A rota retorna um erro <code>400</code> <code>{ "message": "O campo \"watchedAt\" deve ter o formato \"dd/mm/aaaa\"" }</code>, caso a chave watchedAt não respeite o formato <code>dd/mm/aaaa</code>; <br>
   - A rota retorna um erro <code>400</code> <code>{ "message": "O campo \"rate\" é obrigatório" }</code>, caso a chave rate não seja informada ou esteja vazia; <br>
-  - A rota retorna um erro <code>400</code> <code>{ "message": "O campo \"rate\" deve ser um número inteiro entre 1 e 5" }</code>, caso a chave rate não seja um inteiro entre 1 e 5; <br>
+  - A rota retorna um erro <code>400</code> <code>{ "message": "O campo \"rate\" deve ser um número inteiro entre 1 e 5" }</code>, caso a chave rate não seja um número inteiro entre 1 e 5; <br>
 </details>
 <br>
 
 | Método | Funcionalidade | URL |
 |---|---|---|
-| `PUT` | Atualiza um produto através do id | `http://localhost:3001/talker/:id`
+| `PUT` | Atualiza uma pessoa palestrante através do id | `http://localhost:3001/talker/:id`
 
 <details>
   <summary> A estrutura do body da requisição deverá seguir o padrão abaixo: </summary>
@@ -253,15 +259,15 @@ npm run dev
   - A rota retorna um erro <code>400</code> <code>{ "message": "O campo \"watchedAt\" é obrigatório" }</code>, caso a chave watchedAt não seja informada ou esteja vazia; <br>
   - A rota retorna um erro <code>400</code> <code>{ "message": "O campo \"watchedAt\" deve ter o formato \"dd/mm/aaaa\"" }</code>, caso a chave watchedAt não respeite o formato <code>dd/mm/aaaa</code>; <br>
   - A rota retorna um erro <code>400</code> <code>{ "message": "O campo \"rate\" é obrigatório" }</code>, caso a chave rate não seja informada ou esteja vazia; <br>
-  - A rota retorna um erro <code>400</code> <code>{ "message": "O campo \"rate\" deve ser um número inteiro entre 1 e 5" }</code>, caso a chave rate não seja um inteiro entre 1 e 5; <br>
+  - A rota retorna um erro <code>400</code> <code>{ "message": "O campo \"rate\" deve ser um número inteiro entre 1 e 5" }</code>, caso a chave rate não seja um número inteiro entre 1 e 5; <br>
 </details>
 <br>
 
 | Método | Funcionalidade | URL |
 |---|---|---|
-| `DELETE` | Deleta um produto através do id | `http://localhost:3001/talker/:id`
+| `DELETE` | Deleta uma pessoa palestrante através do id | `http://localhost:3001/talker/:id`
 
-* A resposta da requisição é 204 e sem body em caso de sucesso
+* A resposta da requisição é <code>204</code> e sem body em caso de sucesso
 
 <details>
   <summary> A requisição irá falhar nos seguintes casos: </summary>
@@ -272,7 +278,7 @@ npm run dev
 
 | Método | Funcionalidade | URL |
 |---|---|---|
-| `GET` | Retorna uma lista de pessoas palestrantes cadastradas de acordo com os termos de pesquisa | `http://localhost:3001/talker/search`
+| `GET` | Retorna uma lista de pessoas palestrantes de acordo com os termos de pesquisa | `http://localhost:3001/talker/search`
 
 <details>
   <summary> A estrutura da pesquisa deverá seguir o padrão abaixo: </summary>
@@ -305,7 +311,7 @@ npm run dev
   <summary> A requisição irá falhar nos seguintes casos: </summary>
   - A rota retorna um erro <code>401</code> <code>{ "message": "Token não encontrado" }</code>, caso o token de autenticação não seja encontrado; <br>
   - A rota retorna um erro <code>401</code> <code>{ "message": "Token inválido" }</code>, caso o token de autenticação seja inválido; <br>
-  - A rota retorna um erro <code>400</code> <code>{ "message": "O campo \"rate\" deve ser um número inteiro entre 1 e 5" }</code>, caso o parâmetro rate não seja um inteiro entre 1 e 5; <br>
+  - A rota retorna um erro <code>400</code> <code>{ "message": "O campo \"rate\" deve ser um número inteiro entre 1 e 5" }</code>, caso o parâmetro rate não seja um número inteiro entre 1 e 5; <br>
   - A rota retorna um erro <code>400</code> <code>{ "message": "O parâmetro \"date\" deve ter o formato \"dd/mm/aaaa\"" }</code>, caso o parâmetro date não respeite o formato <code>dd/mm/aaaa</code>; <br>
 </details>
 
@@ -332,6 +338,50 @@ npm run dev
 
 <summary> Caso nenhuma pessoa palestrante satisfaça a busca, o endpoint deve retornar o <code>status 200</code> e um array vazio. Exemplo: </summary>
 <code>[]</code>
+</details>
+<br>
+
+| Método | Funcionalidade | URL |
+|---|---|---|
+| `PATCH` | Atualiza a avaliação de uma pessoa palestrante através do id | `http://localhost:3001/talker/rate/:id`
+
+<details>
+  <summary> A estrutura do body da requisição deverá seguir o padrão abaixo: </summary>
+
+```
+{
+  "name": "Danielle Santos",
+  "age": 56,
+  "talk": {
+    "watchedAt": "22/10/2019",
+    "rate": 5
+  }
+}
+```
+</details>
+
+<details>
+  <summary> A resposta da requisição é a seguinte com <code>status 200</code>: </summary>
+  
+```
+{
+  "id": 1,
+  "name": "Danielle Santos",
+  "age": 56,
+  "talk": {
+    "watchedAt": "22/10/2019",
+    "rate": 4
+  }
+}
+```
+</details>
+
+<details>
+  <summary> A requisição irá falhar nos seguintes casos: </summary>
+  - A rota retorna um erro <code>401</code> <code>{ "message": "Token não encontrado" }</code>, caso o token de autenticação não seja encontrado; <br>
+  - A rota retorna um erro <code>401</code> <code>{ "message": "Token inválido" }</code>, caso o token de autenticação seja inválido; <br>
+  - A rota retorna um erro <code>400</code> <code>{ "message": "O campo \"rate\" é obrigatório" }</code>, caso o campo rate não seja informado ou esteja vazio; <br>
+  - A rota retorna um erro <code>400</code> <code>{ "message": "O campo \"rate\" deve ser um número inteiro entre 1 e 5" }</code>, caso o campo rate não seja um número inteiro entre 1 e 5; <br>
 </details>
 
 </details>
